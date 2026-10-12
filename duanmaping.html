@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>PLC段码屏控制教学演示</title>
+<style>
+*{box-sizing:border-box;font-family:Microsoft Yahei;}
+body{background:#222;color:#fff;padding:30px;text-align:center;}
+.container{max-width:700px;margin:0 auto;}
+/* 七段数码管容器 */
+.sevenSeg{position:relative;width:220px;height:320px;margin:20px auto;}
+.seg{position:absolute;background:#333;border-radius:6px;transition:background 0.3s;}
+.seg.on{background:#f44;box-shadow:0 0 12px #f44;}
+/* a-g段 */
+.seg-a{top:10px;left:40px;width:140px;height:16px;}
+.seg-b{top:30px;right:10px;width:16px;height:120px;}
+.seg-c{bottom:30px;right:10px;width:16px;height:120px;}
+.seg-d{bottom:10px;left:40px;width:140px;height:16px;}
+.seg-e{bottom:30px;left:10px;width:16px;height:120px;}
+.seg-f{top:30px;left:10px;width:16px;height:120px;}
+.seg-g{top:150px;left:40px;width:140px;height:16px;}
+/* dp小数点 */
+.seg-dp{bottom:16px;right:16px;width:20px;height:20px;border-radius:50%;}
+.ctrl{margin:30px 0;}
+input[type="number"]{width:120px;font-size:24px;padding:8px;}
+button{font-size:20px;padding:8px 20px;margin-left:10px;cursor:pointer;}
+.desc{margin-top:20px;color:#ccc;text-align:left;}
+</style>
+</head>
+<body>
+<div class="container">
+<h2>PLC段码屏控制教学演示（a-g + dp共8段）</h2>
+
+<div class="sevenSeg">
+<div class="seg seg-a" id="a"></div>
+<div class="seg seg-b" id="b"></div>
+<div class="seg seg-c" id="c"></div>
+<div class="seg seg-d" id="d"></div>
+<div class="seg seg-e" id="e"></div>
+<div class="seg seg-f" id="f"></div>
+<div class="seg seg-g" id="g"></div>
+<div class="seg seg-dp" id="dp"></div>
+</div>
+
+<div class="ctrl">
+<label>输入数字0~9：</label>
+<input type="number" id="numInput" min="0" max="9" value="0">
+<button onclick="showDigit()">PLC译码输出</button>
+<button onclick="autoPlay()">自动循环0~9演示</button>
+</div>
+
+<div class="desc">
+<h4>项目说明：</h4>
+<p>一共8个小灯（对应a‑g七段+小数点dp，8个段）<br>输入一个数字(0~9) → PLC译码，自动点亮对应的段，在段码屏上显示出这个数字。</p>
+<p>段码真值表（共阴极）：<br>0:[1,1,1,1,1,1,0,0]  1:[0,1,1,0,0,0,0,0]  2:[1,1,0,1,1,0,1,0]<br>3:[1,1,1,1,0,0,1,0]  4:[0,1,1,0,0,1,1,0]  5:[1,0,1,1,0,1,1,0]<br>6:[1,0,1,1,1,1,1,0]  7:[1,1,1,0,0,0,0,0]  8:[1,1,1,1,1,1,1,0]<br>9:[1,1,1,1,0,1,1,0]</p>
+</div>
+</div>
+
+<script>
+// 顺序：a,b,c,d,e,f,g,dp
+const segTable = [
+[1,1,1,1,1,1,0,0], //0
+[0,1,1,0,0,0,0,0], //1
+[1,1,0,1,1,0,1,0], //2
+[1,1,1,1,0,0,1,0], //3
+[0,1,1,0,0,1,1,0], //4
+[1,0,1,1,0,1,1,0], //5
+[1,0,1,1,1,1,1,0], //6
+[1,1,1,0,0,0,0,0], //7
+[1,1,1,1,1,1,1,0], //8
+[1,1,1,1,0,1,1,0]  //9
+];
+const segIds = ['a','b','c','d','e','f','g','dp'];
+
+function showDigit(){
+    let n = parseInt(document.getElementById("numInput").value);
+    if(isNaN(n)||n<0||n>9) return;
+    let arr = segTable[n];
+    for(let i=0;i<8;i++){
+        let el = document.getElementById(segIds[i]);
+        if(arr[i]) el.classList.add("on");
+        else el.classList.remove("on");
+    }
+}
+
+async function autoPlay(){
+    for(let i=0;i<=9;i++){
+        document.getElementById("numInput").value = i;
+        showDigit();
+        await new Promise(res=>setTimeout(res,800));
+    }
+}
+showDigit();
+</script>
+</body>
+</html>
+<!-- （注：内容由AI生成） -->
